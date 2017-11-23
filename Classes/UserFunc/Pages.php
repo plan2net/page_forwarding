@@ -19,7 +19,7 @@ class Pages {
      * @return string
      */
     public function getParentId($recordData, UserElement $parent) : string {
-        // a little hack to the parent record (page) ID,
+        // a little hack to get the parent record (page) ID,
         // as we have to set the storage PID for these records to a folder ID
         // see ext_localconf -> addPageTSConfig for details
         $pageId = (integer)substr($_POST['ajax'][0], 5, strpos($_POST['ajax'][0], '-'));
