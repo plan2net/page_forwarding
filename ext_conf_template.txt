@@ -1,0 +1,4 @@
+# cat=basic/enable; type=string; label=Folder ID of the redirect record storage
+storagePid =
+# cat=basic/enable; type=string; label=Default domain (optional)
+defaultDomain =

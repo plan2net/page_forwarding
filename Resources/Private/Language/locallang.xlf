@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" product-name="page_forwarding">
+		<header/>
+		<body>
+			<trans-unit id="pages.tx_pageforwarding_redirects">
+				<source>Redirects</source>
+			</trans-unit>
+			<trans-unit id="tabs.other">
+				<source>Information</source>
+			</trans-unit>
+			<trans-unit id="tx_urlforwarding_domain_model_redirect.sys_language_uid">
+				<source>Target language</source>
+			</trans-unit>
+			<trans-unit id="tx_urlforwarding_domain_model_redirect.forward_url">
+				<source>Source URL (with or without leading or trailing slash)</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
