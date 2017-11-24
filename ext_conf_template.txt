@@ -1,2 +1,4 @@
+# cat=basic/enable; type=string; label=Disable domain handling (for single domains)
+disableDomainHandling = 1
 # cat=basic/enable; type=string; label=Folder ID of the redirect record storage
 storagePid =

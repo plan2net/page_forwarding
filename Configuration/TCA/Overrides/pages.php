@@ -25,6 +25,7 @@ $fields = [
                             'showitem' => '
                                 forward_url,
                                 sys_language_uid,
+                                domain,
             --div--;LLL:EXT:page_forwarding/Resources/Private/Language/locallang.xlf:tabs.other,
                                 internal_page,
                                 http_status,

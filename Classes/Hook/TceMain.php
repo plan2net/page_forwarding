@@ -22,8 +22,6 @@ class TceMain extends \PatrickBroens\UrlForwarding\Hook\TceMain {
         // the parent method uses 'trim' without testing if a value exists,
         // so we have to set an empty string here
         if (!empty($referringObject->datamap['tx_urlforwarding_domain_model_redirect'])) {
-            $extensionConfiguration = (array)unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['page_forwarding']);
-
             foreach ($referringObject->datamap['tx_urlforwarding_domain_model_redirect'] as $uidEditedRecord => &$editedRecord) {
                 $editedRecord['domain'] = $editedRecord['domain'] ?? '';
             }
