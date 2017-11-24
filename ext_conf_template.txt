@@ -1,4 +1,6 @@
-# cat=basic/enable; type=string; label=Disable domain handling (for single domains)
+# cat=basic/enable; type=int; label=Disable domain handling (for single domains)
 disableDomainHandling = 1
-# cat=basic/enable; type=string; label=Folder ID of the redirect record storage
+# cat=basic/enable; type=int; label=Default HTTP status code for redirect
+defaultHttpStatusCode = 301
+# cat=basic/enable; type=int; label=Folder ID of the redirect record storage
 storagePid =

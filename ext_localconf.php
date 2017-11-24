@@ -6,16 +6,15 @@ $extensionConfiguration = (array)unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT'][
 
 // Add general page TS settings
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('TCAdefaults.tx_urlforwarding_domain_model_redirect.pid = ' . ($extensionConfiguration['storagePid'] ?? '0'));
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
+TCAdefaults.tx_urlforwarding_domain_model_redirect.http_status = ' . ($extensionConfiguration['defaultHttpStatusCode'] ?? '301') . '
+TCAdefaults.tx_urlforwarding_domain_model_redirect.pid = ' . ($extensionConfiguration['storagePid'] ?? '0')
+);
 
 // Overwrite classes
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\PatrickBroens\UrlForwarding\Controller\ForwardController::class] = array(
     'className' => \Plan2net\PageForwarding\Controller\ForwardController::class
-);
-
-$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\PatrickBroens\UrlForwarding\Hook\TceMain::class] = array(
-    'className' => \Plan2net\PageForwarding\Hook\TceMain::class
 );
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\PatrickBroens\UrlForwarding\Domain\Repository\RedirectRepository::class] = array(
@@ -30,6 +29,10 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRe
         \TYPO3\CMS\Backend\Form\FormDataProvider\TcaColumnsProcessShowitem::class,
     ]
 ];
+
+// Datahandler hook for pre-/post-processing
+
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['url_forwarding'] = \Plan2net\PageForwarding\Hook\TceMain::class;
 
 // Remove this unnecessary page icon stuff
 
