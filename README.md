@@ -5,6 +5,7 @@ This extension is based on https://github.com/patrickbroens/TYPO3.UrlForwarding
 
 ## Extension Manager configuration
 
+- `disableDomainHandling` This disables any multi-domain handling (set to 1 if you have only one target domain for redirects)
 - `storagePid` This is the ID of a system folder, where all the redirect records will be stored (required)
 
 ## Add redirects in page settings
