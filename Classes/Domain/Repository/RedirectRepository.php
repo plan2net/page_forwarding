@@ -41,10 +41,18 @@ class RedirectRepository extends \PatrickBroens\UrlForwarding\Domain\Repository\
                 'path',
                 'http_status'
             )
+            ->addSelectLiteral(
+                "LENGTH(REPLACE(" . self::TABLE_NAME . ".forward_url, '.*', '')) AS url_length"
+            )
             ->from(self::TABLE_NAME)
             ->where(
                 "TRIM(BOTH '/' FROM " . self::TABLE_NAME . ".forward_url)=" . $queryBuilder->quote(trim($path, '/'))
             )
+            ->orWhere(
+                self::TABLE_NAME . ".forward_url LIKE '%.*' AND LOCATE(REPLACE(TRIM(BOTH '/' FROM " . self::TABLE_NAME . ".forward_url), '.*', ''), " . $queryBuilder->quote(trim($path, '/')) . ") > 0"
+            )
+            ->orderBy('url_length', 'DESC')
+            ->setMaxResults(1)
             ->execute()->fetch();
 
         if ($result) {
