@@ -20,14 +20,14 @@ class TcaShowitemManipulation implements FormDataProviderInterface {
      */
     public function addData(array $result) : array
     {
-        if ($result['tableName'] === 'pages') {
+        if ($result['tableName'] === 'pages' && !empty($result['processedTca']['columns']['tx_pageforwarding_redirects'])) {
             $extensionConfiguration = (array)unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['page_forwarding']);
 
             if ($extensionConfiguration['disableDomainHandling']) {
                 $showItemsList = array_map(function ($item) {
                     return trim($item);
                 }, explode(',',
-                    $result['processedTca']['columns']['tx_pageforwarding_redirects']['config']['overrideChildTca']['types'][0]['showitem']));
+                    $result['processedTca']['columns']['tx_pageforwarding_redirects']['config']['overrideChildTca']['types'][0]['showitem'] ?? ''));
                 $domainKey = array_search('domain', $showItemsList);
                 unset($showItemsList[$domainKey]);
                 $result['processedTca']['columns']['tx_pageforwarding_redirects']['config']['overrideChildTca']['types'][0]['showitem'] = implode(',', $showItemsList);

@@ -2,7 +2,7 @@
 	"name": "plan2net/page-forwarding",
 	"description": "Manage URL redirects in pages",
 	"type": "typo3-cms-extension",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"requires": {
 		"patrickbroens/url-forwarding": "1.3.1"
 	},
