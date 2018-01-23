@@ -3,8 +3,7 @@ declare(strict_types=1);
 
 namespace Plan2net\PageForwarding\Hook;
 
-use PatrickBroens\UrlForwarding\Domain\Repository\RedirectRepository;
-use TYPO3\CMS\Core\Database\ConnectionPool;
+use Plan2net\PageForwarding\Domain\Repository\RedirectRepository;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -35,56 +34,57 @@ class TceMain extends \PatrickBroens\UrlForwarding\Hook\TceMain {
 
         $allowed = true;
 
+        /** @var \Plan2net\PageForwarding\Domain\Repository\RedirectRepository $redirectRepository */
         $redirectRepository = GeneralUtility::makeInstance(RedirectRepository::class);
 
         foreach ($referringObject->datamap['tx_urlforwarding_domain_model_redirect'] as $uidEditedRecord => $editedRecord) {
+            if (isset($editedRecord['forward_url'])) {
+                $equalRecords = $redirectRepository->getEqualRecords((string)$uidEditedRecord, $editedRecord);
 
-            $equalRecords = $redirectRepository->getEqualRecords((string)$uidEditedRecord, $editedRecord);
+                // Does the url exist in another record
+                if (!empty($equalRecords)) {
 
-            // Does the url exist in another record
-            if (!empty($equalRecords)) {
+                    // The edited record does not have domains assigned, so not allowed
+                    if (empty($editedRecord['domain'])) {
+                        $allowed = false;
+                        // Lets test on domains
+                    } else {
+                        $editedRecord['domain'] = trim($editedRecord['domain'], ',');
 
-                // The edited record does not have domains assigned, so not allowed
-                if (empty($editedRecord['domain'])) {
-                    $allowed = false;
-
-                    // Lets test on domains
-                } else {
-                    $editedRecord['domain'] = trim($editedRecord['domain'], ',');
-
-                    foreach ($equalRecords as $equalRecord) {
-                        if ($equalRecord['domainUids'] === null) {
-                            $allowed = false;
-                            break;
-                        } else {
-                            $editedRecordDomainUids = GeneralUtility::intExplode(',', $editedRecord['domain']);
-                            $equalRecordDomainUids = GeneralUtility::intExplode(',', $equalRecord['domainUids']);
-
-                            $equalDomainUids = array_intersect($editedRecordDomainUids, $equalRecordDomainUids);
-
-                            if (!empty($equalDomainUids)) {
+                        foreach ($equalRecords as $equalRecord) {
+                            if ($equalRecord['domainUids'] === null) {
                                 $allowed = false;
                                 break;
+                            } else {
+                                $editedRecordDomainUids = GeneralUtility::intExplode(',', $editedRecord['domain']);
+                                $equalRecordDomainUids = GeneralUtility::intExplode(',', $equalRecord['domainUids']);
+
+                                $equalDomainUids = array_intersect($editedRecordDomainUids, $equalRecordDomainUids);
+
+                                if (!empty($equalDomainUids)) {
+                                    $allowed = false;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            if (!$allowed) {
-                unset($referringObject->datamap['tx_urlforwarding_domain_model_redirect'][$uidEditedRecord]);
+                if (!$allowed) {
+                    unset($referringObject->datamap['tx_urlforwarding_domain_model_redirect'][$uidEditedRecord]);
 
-                /** @var FlashMessage $flashMessage */
-                $flashMessage = GeneralUtility::makeInstance(
-                    FlashMessage::class,
-                    'A redirect with the name "'
-                    . htmlspecialchars($editedRecord['forward_url'])
-                    . '" is already covering the same domain. This record has not been stored.',
-                    'An error occured',
-                    FlashMessage::ERROR,
-                    true
-                );
-                $this->getFlashMessageQueue()->addMessage($flashMessage);
+                    /** @var FlashMessage $flashMessage */
+                    $flashMessage = GeneralUtility::makeInstance(
+                        FlashMessage::class,
+                        'A redirect with the name "'
+                        . htmlspecialchars($editedRecord['forward_url'])
+                        . '" is already covering the same domain. This record has not been stored.',
+                        'An error occured',
+                        FlashMessage::ERROR,
+                        true
+                    );
+                    $this->getFlashMessageQueue()->addMessage($flashMessage);
+                }
             }
         }
     }

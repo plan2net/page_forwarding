@@ -76,4 +76,67 @@ class RedirectRepository extends \PatrickBroens\UrlForwarding\Domain\Repository\
         return $redirect;
     }
 
+    /**
+     * Get records with the same "forward_url"
+     *
+     * @param string $uidEditedRecord The uid of the edited record. When new contains 'NEW'
+     * @param array $editedRecord The fields of the edited record
+     * @return mixed
+     */
+    public function getEqualRecords(string $uidEditedRecord, array $editedRecord)
+    {
+        $pathQuoted = $this->getDatabaseConnection()->fullQuoteStr((string)trim($editedRecord['forward_url'], '/'),
+            'tx_urlforwarding_domain_model_redirect');
+        $whereUid = '';
+
+        if (strpos($uidEditedRecord, 'NEW') === false) {
+            $whereUid = ' AND uid<>' . (int)$uidEditedRecord;
+        }
+
+        $extensionConfiguration = (array)unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['page_forwarding']);
+        if ((bool)$extensionConfiguration['disableDomainHandling']) {
+            return $this->getDatabaseConnection()->exec_SELECTgetRows(
+                '
+                tx_urlforwarding_domain_model_redirect.uid,
+                tx_urlforwarding_domain_model_redirect.type,
+                tx_urlforwarding_domain_model_redirect.parameters
+            ',
+                '
+                tx_urlforwarding_domain_model_redirect
+            ',
+                '
+                TRIM(BOTH \'/\' FROM tx_urlforwarding_domain_model_redirect.forward_url)=' . $pathQuoted . '
+                AND tx_urlforwarding_domain_model_redirect.deleted<>1
+                ' . $whereUid . '
+            ',
+                '
+                tx_urlforwarding_domain_model_redirect.uid
+            '
+            );
+        }
+        else {
+            return $this->getDatabaseConnection()->exec_SELECTgetRows(
+                '
+                tx_urlforwarding_domain_model_redirect.uid,
+                tx_urlforwarding_domain_model_redirect.type,
+                GROUP_CONCAT(tx_urlforwarding_domain_mm.uid_foreign SEPARATOR \',\') AS domainUids,
+                tx_urlforwarding_domain_model_redirect.parameters
+            ',
+                '
+                tx_urlforwarding_domain_model_redirect
+                LEFT JOIN tx_urlforwarding_domain_mm
+                ON tx_urlforwarding_domain_mm.uid_local = tx_urlforwarding_domain_model_redirect.uid
+            ',
+                '
+                TRIM(BOTH \'/\' FROM tx_urlforwarding_domain_model_redirect.forward_url)=' . $pathQuoted . '
+                AND tx_urlforwarding_domain_model_redirect.deleted<>1
+                ' . $whereUid . '
+            ',
+                '
+                tx_urlforwarding_domain_model_redirect.uid
+            '
+            );
+        }
+    }
+
 }
