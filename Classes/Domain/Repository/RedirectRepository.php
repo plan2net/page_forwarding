@@ -51,6 +51,9 @@ class RedirectRepository extends \PatrickBroens\UrlForwarding\Domain\Repository\
             ->orWhere(
                 self::TABLE_NAME . ".forward_url LIKE '%.*' AND LOCATE(REPLACE(TRIM(BOTH '/' FROM " . self::TABLE_NAME . ".forward_url), '.*', ''), " . $queryBuilder->quote(trim($path, '/')) . ") > 0"
             )
+            ->andWhere(
+                self::TABLE_NAME . ".hidden=0 AND " . self::TABLE_NAME . ".deleted=0"
+            )
             ->orderBy('url_length', 'DESC')
             ->setMaxResults(1)
             ->execute()->fetch();
