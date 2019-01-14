@@ -17,7 +17,7 @@ $EM_CONF[$_EXTKEY] = array (
 		'depends' => 
 		array (
 			'typo3' => '8.0.0-8.7.99',
-            'url_forwarding' => '1.3.1',
+			'url_forwarding' => '1.3.0-1.3.99'
 		),
 		'suggests' => 
 		array (

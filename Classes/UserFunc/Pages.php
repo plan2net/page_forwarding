@@ -22,7 +22,8 @@ class Pages {
         // a little hack to get the parent record (page) ID,
         // as we have to set the storage PID for these records to a folder ID
         // see ext_localconf -> addPageTSConfig for details
-        $pageId = (integer)substr($_POST['ajax'][0], 5, strpos($_POST['ajax'][0], '-'));
+        $ajaxParts = explode('-', $_POST['ajax'][0]);
+        $pageId = (integer)$ajaxParts[1];
 
         return '<input type="text" name="' . $recordData['itemFormElName'] . '" value="' . $pageId . '" class="form-control" readonly="readonly">';
     }
